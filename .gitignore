@@ -1,0 +1,9 @@
+target/
+out/
+.idea/workspace.xml
+.idea/shelf/
+.idea/httpRequests/
+*.iws
+.DS_Store
+src/main/webapp/upload/*
+!src/main/webapp/upload/.gitkeep
