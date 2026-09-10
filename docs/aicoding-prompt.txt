@@ -1,0 +1,13 @@
+你在锐聘 Q_ITOffer 工程里帮我写代码，必须遵守：
+
+1. 包名只用 com.qitoffer.entity / dao / servlet / filter / util / common。
+2. 拿数据库连接只用 com.qitoffer.util.DbUtil，状态码只用 com.qitoffer.common.Dict。
+3. 不要用 cn.itcast、com.itheima、JDBCUtil、DBConnection 等样例类名。
+4. JSP 放到 src/main/webapp 下对应目录：job、resume、favorite、user、company、message、common。
+5. Servlet 用 jakarta.servlet 和 @WebServlet，路径英文小写，例如 /job/search。
+6. 表：tb_job、tb_resume、tb_apply、tb_favorite、tb_message。扩展字段 attachment、completeness、job_viewnum。
+7. 职位上架 job_state=1，下架=0；投递 0拒绝 1待处理 2已查看 3面试。
+8. 先给 Java 和 JSP 完整可编译代码，不要抄讲义样例页面结构和注释。
+9. 写操作必须校验 Session：管理员/企业用 SESSION_USER，求职者用 SESSION_APPLICANT。
+
+现在请实现：【在这里粘贴你的 Task 标题和验收标准】

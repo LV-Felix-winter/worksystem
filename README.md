@@ -1,38 +1,9 @@
-# 锐聘 · JobReady 求职招聘平台
+# Q_ITOffer 锐聘网站
 
-> 刘璟灏组 MBTI 职业性格测试系统 · 锐聘模块  
-> 处理人：佟乐 | 预计工期：2026-09-13 ~ 2026-09-16
+Java Web 实训（Servlet / JSP / JDBC / MySQL）。
 
-## 任务清单
-
-### 简历模块 (#71098791/#71098792/#71099535/#71099536)
-- #71098791 Story 简历列表分页与详情
-- #71098792 Task 实现：简历列表分页
-- #71099535 Story 简历完整度与附件上传
-- #71099536 Task 完整度计算与附件
-
-### 职位模块 (#71098793/#71098794/#71099527/#71099528/#71099529/#71099532)
-- #71098793 Story 职位列表条件查询
-- #71098794 Task 实现：职位列表条件筛选
-- #71099527 Feature 职位检索与收藏
-- #71099528 Story 按关键词地区筛选
-- #71099529 Task 编写多条件筛选逻辑
-- #71099532 Task 收藏表接口 Servlet
-
-### 投递模块 (#71099538/#71099539)
-- #71099538 Story 投递状态流转与跟踪
-- #71099539 Task 投递状态更新接口
-
-### 验收模块 (#71098820/#71098821)
-- #71098820 Epic 项目验收答辩
-- #71098821 Feature 验收交付
-
-## 运行方式
-1. 用 IntelliJ IDEA 打开本目录
-2. IDEA 自动识别 Maven 项目
-3. 浏览器打开 `src/main/resources/static/index.html` 预览
-
-## 技术栈
-- 后端：Java 17 + Maven
-- 前端：纯 HTML + CSS + JavaScript（无外部依赖）
-- 存储：localStorage（前端持久化）
+本地运行：IDEA 打开本仓库，运行配置 `Q_ITOffer`（Smart Tomcat）。  
+数据库：`127.0.0.1:3306`，库 `q_itoffer`，账号 `root / 888`。  
+建库脚本：`src/main/resources/sql/q_itoffer.sql`  
+扩展脚本：`src/main/resources/sql/q_itoffer_ext.sql`  
+AI Coding 约定：`docs/AI-CODING.md`
