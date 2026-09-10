@@ -51,7 +51,7 @@ public class CompanyAuthServlet extends HttpServlet {
             user.setUserPwd(null);
             req.getSession(true).setAttribute(Dict.SESSION_ADMIN, user);
             req.getSession().removeAttribute(Dict.SESSION_APPLICANT);
-            resp.sendRedirect(req.getContextPath() + "/");
+            resp.sendRedirect(req.getContextPath() + "/manage/");
         } catch (Exception e) {
             AuthSupport.redirectLogin(req, resp, "company", "pwd", "server");
         }

@@ -44,15 +44,8 @@
     <link rel="stylesheet" href="<%= ctx %>/common/login.css">
 </head>
 <body>
-<header class="top">
-    <a class="brand" href="<%= ctx %>/"><i></i>锐聘</a>
-    <nav class="nav">
-        <a href="<%= ctx %>/">找工作</a>
-        <a href="<%= ctx %>/login?view=company">招人才</a>
-        <span>帮助中心</span>
-    </nav>
-    <span class="help">使用说明</span>
-</header>
+<% request.setAttribute("headerMode", "login"); %>
+<jsp:include page="/common/header.jsp"/>
 
 <main class="stage">
     <section class="hero">

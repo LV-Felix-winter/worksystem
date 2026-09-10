@@ -22,8 +22,11 @@ public class LoginServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         HttpSession session = req.getSession(false);
-        if (session != null && (session.getAttribute(Dict.SESSION_ADMIN) != null
-                || session.getAttribute(Dict.SESSION_APPLICANT) != null)) {
+        if (session != null && session.getAttribute(Dict.SESSION_ADMIN) != null) {
+            resp.sendRedirect(req.getContextPath() + "/manage/");
+            return;
+        }
+        if (session != null && session.getAttribute(Dict.SESSION_APPLICANT) != null) {
             resp.sendRedirect(req.getContextPath() + "/");
             return;
         }
