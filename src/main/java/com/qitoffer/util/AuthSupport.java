@@ -1,7 +1,8 @@
 package com.qitoffer.util;
 
 import com.qitoffer.common.Dict;
-import com.qitoffer.util.CaptchaUtil;
+import com.qitoffer.entity.Applicant;
+import com.qitoffer.entity.User;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -31,6 +32,51 @@ public final class AuthSupport {
 
     public static boolean consumeSmsCode(String input) {
         return Dict.SMS_DEMO_CODE.equals(trim(input));
+    }
+
+    public static String appPath(HttpServletRequest req) {
+        String uri = req.getRequestURI();
+        String ctx = req.getContextPath();
+        String path = uri.startsWith(ctx) ? uri.substring(ctx.length()) : uri;
+        if (path.isEmpty()) {
+            path = "/";
+        }
+        int semi = path.indexOf(';');
+        if (semi >= 0) {
+            path = path.substring(0, semi);
+        }
+        return path;
+    }
+
+    public static User backendUser(HttpServletRequest req) {
+        HttpSession session = req.getSession(false);
+        if (session == null) {
+            return null;
+        }
+        Object value = session.getAttribute(Dict.SESSION_ADMIN);
+        return value instanceof User ? (User) value : null;
+    }
+
+    public static Applicant applicant(HttpServletRequest req) {
+        HttpSession session = req.getSession(false);
+        if (session == null) {
+            return null;
+        }
+        Object value = session.getAttribute(Dict.SESSION_APPLICANT);
+        return value instanceof Applicant ? (Applicant) value : null;
+    }
+
+    public static boolean isAdminOnlyPath(String path) {
+        return path.startsWith("/manage/user")
+                || path.startsWith("/manage/company")
+                || "/manage/job.jsp".equals(path)
+                || path.startsWith("/manage/resume")
+                || path.startsWith("/manage/online");
+    }
+
+    public static void redirectTo(HttpServletRequest req, HttpServletResponse resp, String path)
+            throws IOException {
+        resp.sendRedirect(req.getContextPath() + path);
     }
 
     public static void redirectLogin(HttpServletRequest req, HttpServletResponse resp,

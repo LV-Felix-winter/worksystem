@@ -33,6 +33,8 @@
         errText = "请完整填写企业名称、手机号、密码和验证码。";
     } else if ("server".equals(err)) {
         errText = "服务暂时不可用，请稍后重试。";
+    } else if ("auth".equals(err)) {
+        errText = "请先登录后再访问该页面。";
     }
 %>
 <!DOCTYPE html>

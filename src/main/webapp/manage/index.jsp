@@ -18,6 +18,9 @@
 %>
 <div class="card">
     <h1><%= admin ? "管理后台" : "企业工作台" %></h1>
+    <% if ("denied".equals(request.getParameter("err"))) { %>
+    <p class="err">当前账号没有该菜单权限，已回到工作台。</p>
+    <% } %>
     <p class="muted">当前身份：<%= roleName %> · <%= display %>。左侧菜单按角色显示，后续模块接入后可从这里进入。</p>
 </div>
 <% } %>
