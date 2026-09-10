@@ -38,4 +38,9 @@ public final class Dict {
 
     public static final String SESSION_ADMIN = "SESSION_USER";
     public static final String SESSION_APPLICANT = "SESSION_APPLICANT";
+    public static final String SESSION_CAPTCHA = "SESSION_CAPTCHA";
+    public static final String SESSION_SMS_PHONE = "SESSION_SMS_PHONE";
+
+    /** 草图演示短信验证码，非正式运营商下发 */
+    public static final String SMS_DEMO_CODE = "246810";
 }

@@ -22,6 +22,7 @@ CREATE TABLE tb_users (
   user_pwd VARCHAR(50) NOT NULL,
   user_realname VARCHAR(60) DEFAULT NULL,
   user_email VARCHAR(100) DEFAULT NULL,
+  user_phone VARCHAR(20) DEFAULT NULL,
   user_role INT(11) DEFAULT 2 COMMENT '1管理员 2企业用户',
   user_state INT(11) DEFAULT 1 COMMENT '1启用 0禁用',
   PRIMARY KEY (user_id),
@@ -63,9 +64,12 @@ CREATE TABLE tb_applicant (
   applicant_id INT(11) NOT NULL AUTO_INCREMENT,
   applicant_email VARCHAR(100) NOT NULL,
   applicant_pwd VARCHAR(50) NOT NULL,
+  applicant_name VARCHAR(50) DEFAULT NULL,
+  applicant_phone VARCHAR(20) DEFAULT NULL,
   applicant_registdate DATETIME DEFAULT NULL,
   PRIMARY KEY (applicant_id),
-  UNIQUE KEY uk_applicant_email (applicant_email)
+  UNIQUE KEY uk_applicant_email (applicant_email),
+  UNIQUE KEY uk_applicant_phone (applicant_phone)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE tb_resume (
@@ -98,11 +102,11 @@ CREATE TABLE tb_apply (
   KEY idx_apply_resume (resume_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT INTO tb_users (user_id, user_logname, user_pwd, user_realname, user_email, user_role, user_state)
-VALUES (1, 'admin', '123456', '系统管理员', 'admin@itoffer.cn', 1, 1);
+INSERT INTO tb_users (user_id, user_logname, user_pwd, user_realname, user_email, user_phone, user_role, user_state)
+VALUES (1, 'admin', '123456', '系统管理员', 'admin@itoffer.cn', NULL, 1, 1);
 
-INSERT INTO tb_users (user_id, user_logname, user_pwd, user_realname, user_email, user_role, user_state)
-VALUES (2, 'qingruan', '123456', '青软实训', 'hr@qingruan.cn', 2, 1);
+INSERT INTO tb_users (user_id, user_logname, user_pwd, user_realname, user_email, user_phone, user_role, user_state)
+VALUES (2, 'qingruan', '123456', '青软实训', 'hr@qingruan.cn', '13900139000', 2, 1);
 
 INSERT INTO tb_company (company_id, user_id, company_name, company_area, company_size, company_type, company_brief, company_state, company_sort)
 VALUES (1, 2, '青软实训', '青岛', '1000人以上', '教育培训', '面向高校的IT实训与就业服务企业。', 1, 1);
@@ -110,8 +114,8 @@ VALUES (1, 2, '青软实训', '青岛', '1000人以上', '教育培训', '面向
 INSERT INTO tb_job (job_id, company_id, job_name, job_hiringnum, job_salary, job_area, job_desc, job_endtime, job_state)
 VALUES (1, 1, 'Java Web 开发实习生', 5, '6k-8k', '青岛', '参与锐聘网站开发，使用 JSP / Servlet / JDBC。', '2026-12-31', 1);
 
-INSERT INTO tb_applicant (applicant_id, applicant_email, applicant_pwd, applicant_registdate)
-VALUES (1, 'test@itoffer.cn', '123456', NOW());
+INSERT INTO tb_applicant (applicant_id, applicant_email, applicant_pwd, applicant_name, applicant_phone, applicant_registdate)
+VALUES (1, 'test@itoffer.cn', '123456', '张三', '13800138000', NOW());
 
 INSERT INTO tb_resume (resume_id, applicant_id, realname, gender, birthday, current_loc, resident_loc, telephone, email, job_intension, job_experience, completeness)
 VALUES (1, 1, '张三', '男', '2004-01-01', '青岛', '济南', '13800000000', 'test@itoffer.cn', 'Java 开发', '熟悉 Servlet、JSP、MySQL。', 80);

@@ -51,7 +51,12 @@ DELIMITER ;
 CALL sp_qitoffer_add_column('tb_resume', 'attachment', 'VARCHAR(255) DEFAULT NULL');
 CALL sp_qitoffer_add_column('tb_resume', 'completeness', 'INT(11) DEFAULT 0');
 CALL sp_qitoffer_add_column('tb_job', 'job_viewnum', 'INT(11) DEFAULT 0');
+CALL sp_qitoffer_add_column('tb_applicant', 'applicant_name', 'VARCHAR(50) DEFAULT NULL');
+CALL sp_qitoffer_add_column('tb_applicant', 'applicant_phone', 'VARCHAR(20) DEFAULT NULL');
+CALL sp_qitoffer_add_column('tb_users', 'user_phone', 'VARCHAR(20) DEFAULT NULL');
 
 DROP PROCEDURE IF EXISTS sp_qitoffer_add_column;
 
 UPDATE tb_resume SET completeness = 80 WHERE resume_id = 1 AND (completeness IS NULL OR completeness = 0);
+UPDATE tb_applicant SET applicant_name = '张三', applicant_phone = '13800138000' WHERE applicant_id = 1;
+UPDATE tb_users SET user_phone = '13900139000' WHERE user_id = 2 AND user_logname = 'qingruan';
