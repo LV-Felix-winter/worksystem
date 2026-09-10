@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>锐聘 · JobReady</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;background:linear-gradient(135deg,#1a1a2e,#16213e);min-height:100vh;display:flex;align-items:center;justify-content:center;color:#fff}
+    .wrap{text-align:center;max-width:800px;padding:40px}
+    .logo{font-size:48px;font-weight:700;margin-bottom:8px}.logo span{color:#4facfe}
+    .sub{font-size:14px;color:rgba(255,255,255,0.5);margin-bottom:8px}
+    .task-info{font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:36px;line-height:2}
+    .cards{display:flex;gap:20px;justify-content:center;flex-wrap:wrap}
+    .card{background:rgba(255,255,255,0.08);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.12);border-radius:16px;padding:28px 32px;width:220px;cursor:pointer;transition:all .3s;text-decoration:none;color:#fff}
+    .card:hover{transform:translateY(-4px);background:rgba(255,255,255,0.14);border-color:#4facfe}
+    .card-icon{font-size:36px;margin-bottom:12px}
+    .card-title{font-size:16px;font-weight:600;margin-bottom:6px}
+    .card-desc{font-size:12px;color:rgba(255,255,255,0.5);line-height:1.6}
+    .card-tasks{margin-top:12px;font-size:11px;color:rgba(79,172,254,0.8)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="logo"><span>锐聘</span> · JobReady</div>
+    <div class="sub">刘璟灏组 MBTI 职业性格测试系统</div>
+    <div class="task-info">
+      处理人：佟乐 | 预计工期：2026-09-13 ~ 2026-09-16<br>
+      #71098791/#71098792 简历列表分页 | #71099535/#71099536 简历完整度<br>
+      #71098793/#71098794 职位条件筛选 | #71099527/#71099528/#71099529 职位检索收藏<br>
+      #71099532 收藏表接口 | #71099538/#71099539 投递状态流转<br>
+      #71098820/#71098821 验收交付
+    </div>
+    <div class="cards">
+      <a class="card" href="pages/jobs.html">
+        <div class="card-icon">🔍</div>
+        <div class="card-title">职位检索与收藏</div>
+        <div class="card-desc">关键词搜索、城市薪资筛选、收藏职位</div>
+        <div class="card-tasks">#71099527/#71099528/#71099529/#71099532</div>
+      </a>
+      <a class="card" href="pages/resume.html">
+        <div class="card-icon">📋</div>
+        <div class="card-title">简历增强与投递</div>
+        <div class="card-desc">完整度计算、模块开关、投递状态跟踪</div>
+        <div class="card-tasks">#71099535/#71099536/#71099538/#71099539</div>
+      </a>
+    </div>
+  </div>
+</body>
+</html>
