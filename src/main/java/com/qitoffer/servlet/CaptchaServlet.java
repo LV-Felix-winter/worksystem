@@ -11,6 +11,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
+/** 生成图形验证码并写入 SESSION_CAPTCHA，供企业/密码登录校验。 */
 @WebServlet("/captcha")
 public class CaptchaServlet extends HttpServlet {
     @Override
