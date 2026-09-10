@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 
+/** 退出登录：销毁 Session 并回到登录页。 */
 @WebServlet("/logout")
 public class LogoutServlet extends HttpServlet {
     @Override

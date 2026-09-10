@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 
+/** 后台登录入口。GET 打开登录页，POST 校验图形验证码后写入 SESSION_USER。 */
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
     private final UserDao userDao = new UserDao();
