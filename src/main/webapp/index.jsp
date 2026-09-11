@@ -24,11 +24,14 @@
     <p class="muted">已登录求职者：<%= applicant.getApplicantName() != null && !applicant.getApplicantName().isEmpty()
             ? applicant.getApplicantName() : applicant.getApplicantPhone() %>。可从顶栏进入个人中心或投递记录。</p>
     <div class="actions">
-        <a class="primary" href="<%= ctx %>/user/center.jsp">个人中心</a>
+        <a class="primary" href="<%= ctx %>/job/search">找工作</a>
+        <a class="primary" href="<%= ctx %>/resume/">我的简历</a>
+        <a class="primary" href="<%= ctx %>/user/apply.jsp">我的投递</a>
     </div>
     <% } else { %>
     <p class="muted">同一个入口，求职者与企业分身份登录，互不串号。</p>
     <div class="actions">
+        <a class="primary" href="<%= ctx %>/job/search">浏览职位</a>
         <a class="primary" href="<%= ctx %>/login">进入登录</a>
     </div>
     <% } %>
