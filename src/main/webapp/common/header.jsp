@@ -31,11 +31,12 @@
         <% if (backend != null) { %>
         <a class="<%= "workbench".equals(navKey) ? "on" : "" %>" href="<%= ctx %>/manage/">工作台</a>
         <% } else if (applicant != null) { %>
-        <a class="<%= "jobs".equals(navKey) ? "on" : "" %>" href="<%= ctx %>/">找工作</a>
-        <a class="<%= "center".equals(navKey) ? "on" : "" %>" href="<%= ctx %>/user/center.jsp">个人中心</a>
+        <a class="<%= "jobs".equals(navKey) ? "on" : "" %>" href="<%= ctx %>/job/search">找工作</a>
+        <a class="<%= "center".equals(navKey) ? "on" : "" %>" href="<%= ctx %>/resume/">我的简历</a>
         <a class="<%= "apply".equals(navKey) ? "on" : "" %>" href="<%= ctx %>/user/apply.jsp">我的投递</a>
+        <a class="<%= "fav".equals(navKey) ? "on" : "" %>" href="<%= ctx %>/favorite/list">收藏职位</a>
         <% } else { %>
-        <a class="<%= "jobs".equals(navKey) ? "on" : "" %>" href="<%= ctx %>/">找工作</a>
+        <a class="<%= "jobs".equals(navKey) ? "on" : "" %>" href="<%= ctx %>/job/search">找工作</a>
         <a href="<%= ctx %>/login?view=company">招人才</a>
         <span>帮助中心</span>
         <% } %>
