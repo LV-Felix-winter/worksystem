@@ -22,12 +22,16 @@ public class LoginServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         HttpSession session = req.getSession(false);
-        if (session != null && session.getAttribute(Dict.SESSION_ADMIN) != null) {
-            resp.sendRedirect(req.getContextPath() + "/manage/");
+        if (session != null && session.getAttribute(Dict.SESSION_ADMIN) instanceof User logged) {
+            if (logged.getUserRole() == Dict.ROLE_ADMIN) {
+                resp.sendRedirect(req.getContextPath() + "/manage/user.jsp");
+            } else {
+                resp.sendRedirect(req.getContextPath() + "/company/dashboard");
+            }
             return;
         }
         if (session != null && session.getAttribute(Dict.SESSION_APPLICANT) != null) {
-            resp.sendRedirect(req.getContextPath() + "/");
+            resp.sendRedirect(req.getContextPath() + "/job/search");
             return;
         }
         req.getRequestDispatcher("/login.jsp").forward(req, resp);
@@ -74,6 +78,7 @@ public class LoginServlet extends HttpServlet {
             user.setUserPwd(null);
             HttpSession loginSession = req.getSession(true);
             loginSession.setAttribute(Dict.SESSION_ADMIN, user);
+            loginSession.removeAttribute(Dict.SESSION_APPLICANT);
             resp.getWriter().write("OK userId=" + user.getUserId()
                     + " role=" + user.getUserRole()
                     + " name=" + nullToEmpty(user.getUserRealname()));

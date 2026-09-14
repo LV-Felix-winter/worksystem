@@ -15,12 +15,17 @@ public class Job {
     private String jobEndtime;
     private int jobState;
     private int jobViewnum;
+    private String jobCover;
+    private String jobThumb;
+    private int applyCount;
 
     // 关联字段（JOIN tb_company）
     private String companyName;
     private String companyArea;
     private String companySize;
     private String companyType;
+    private String companyBrief;
+    private String companyPic;
 
     public int getJobId() { return jobId; }
     public void setJobId(int jobId) { this.jobId = jobId; }
@@ -42,6 +47,10 @@ public class Job {
     public void setJobState(int jobState) { this.jobState = jobState; }
     public int getJobViewnum() { return jobViewnum; }
     public void setJobViewnum(int jobViewnum) { this.jobViewnum = jobViewnum; }
+    public String getJobCover() { return jobCover; }
+    public void setJobCover(String jobCover) { this.jobCover = jobCover; }
+    public String getJobThumb() { return jobThumb; }
+    public void setJobThumb(String jobThumb) { this.jobThumb = jobThumb; }
     public String getCompanyName() { return companyName; }
     public void setCompanyName(String companyName) { this.companyName = companyName; }
     public String getCompanyArea() { return companyArea; }
@@ -50,4 +59,10 @@ public class Job {
     public void setCompanySize(String companySize) { this.companySize = companySize; }
     public String getCompanyType() { return companyType; }
     public void setCompanyType(String companyType) { this.companyType = companyType; }
+    public String getCompanyBrief() { return companyBrief; }
+    public void setCompanyBrief(String companyBrief) { this.companyBrief = companyBrief; }
+    public String getCompanyPic() { return companyPic; }
+    public void setCompanyPic(String companyPic) { this.companyPic = companyPic; }
+    public int getApplyCount() { return applyCount; }
+    public void setApplyCount(int applyCount) { this.applyCount = applyCount; }
 }

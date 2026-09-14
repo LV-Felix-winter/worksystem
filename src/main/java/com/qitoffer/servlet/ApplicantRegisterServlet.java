@@ -50,7 +50,7 @@ public class ApplicantRegisterServlet extends HttpServlet {
                 req.getSession(true).setAttribute(Dict.SESSION_APPLICANT, saved);
                 req.getSession().removeAttribute(Dict.SESSION_ADMIN);
             }
-            resp.sendRedirect(req.getContextPath() + "/");
+            resp.sendRedirect(req.getContextPath() + "/job/search");
         } catch (Exception e) {
             AuthSupport.redirectLogin(req, resp, "register", "sms", "server");
         }

@@ -66,12 +66,54 @@ public final class AuthSupport {
         return value instanceof Applicant ? (Applicant) value : null;
     }
 
+    /** 顶栏身份：applicant / company / admin / public-company / public-admin / guest */
+    public static String navRealm(HttpServletRequest req) {
+        User backend = backendUser(req);
+        Applicant applicant = applicant(req);
+        String path = appPath(req);
+        boolean companyWork = isCompanyWorkspace(path);
+        boolean adminWork = isAdminWorkspace(path);
+        /* 管理员始终用管理顶栏，不随页面切到企业/访客态 */
+        if (backend != null && backend.getUserRole() == Dict.ROLE_ADMIN) {
+            return "admin";
+        }
+        if (applicant != null && !companyWork && !adminWork) {
+            return "applicant";
+        }
+        if (backend != null && backend.getUserRole() == Dict.ROLE_COMPANY && companyWork) {
+            return "company";
+        }
+        if (applicant != null) {
+            return "applicant";
+        }
+        if (backend != null && backend.getUserRole() == Dict.ROLE_COMPANY) {
+            return "public-company";
+        }
+        return "guest";
+    }
+
+    public static boolean isCompanyWorkspace(String path) {
+        return path.startsWith("/company")
+                || "/apply/company".equals(path)
+                || path.startsWith("/apply/detail")
+                || path.startsWith("/apply/state")
+                || "/talk".equals(path)
+                || path.startsWith("/talk/")
+                || path.startsWith("/message");
+    }
+
+    public static boolean isAdminWorkspace(String path) {
+        return "/manage".equals(path) || path.startsWith("/manage/");
+    }
+
     public static boolean isAdminOnlyPath(String path) {
         return path.startsWith("/manage/user")
                 || path.startsWith("/manage/company")
-                || "/manage/job.jsp".equals(path)
+                || path.startsWith("/manage/job")
+                || path.startsWith("/manage/apply")
                 || path.startsWith("/manage/resume")
-                || path.startsWith("/manage/online");
+                || path.startsWith("/manage/online")
+                || path.startsWith("/manage/password");
     }
 
     public static void redirectTo(HttpServletRequest req, HttpServletResponse resp, String path)

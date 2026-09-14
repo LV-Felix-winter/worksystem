@@ -1,8 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="com.qitoffer.common.Dict" %>
+<%@ page import="com.qitoffer.common.Pics" %>
 <%@ page import="com.qitoffer.entity.Applicant" %>
 <%@ page import="com.qitoffer.entity.Job" %>
-<%@ page import="com.qitoffer.dao.FavoriteDao" %>
 <%@ page import="java.net.URLEncoder" %>
 <%@ page import="java.util.*" %>
 <%
@@ -13,149 +13,179 @@
         jobs = Collections.emptyList();
     }
     int total = request.getAttribute("total") instanceof Integer ? (Integer) request.getAttribute("total") : 0;
-    int page = request.getAttribute("page") instanceof Integer ? (Integer) request.getAttribute("page") : 1;
+    int curPage = request.getAttribute("page") instanceof Integer ? (Integer) request.getAttribute("page") : 1;
     int pageCount = request.getAttribute("pageCount") instanceof Integer ? (Integer) request.getAttribute("pageCount") : 1;
-    int pageSize = request.getAttribute("pageSize") instanceof Integer ? (Integer) request.getAttribute("pageSize") : 6;
     String keyword = request.getAttribute("keyword") != null ? (String) request.getAttribute("keyword") : "";
     String area = request.getAttribute("area") != null ? (String) request.getAttribute("area") : "";
     int salaryMin = request.getAttribute("salaryMin") instanceof Integer ? (Integer) request.getAttribute("salaryMin") : 0;
     int salaryMax = request.getAttribute("salaryMax") instanceof Integer ? (Integer) request.getAttribute("salaryMax") : 0;
     boolean popular = Boolean.TRUE.equals(request.getAttribute("popular"));
+    boolean dbErr = Boolean.TRUE.equals(request.getAttribute("dbErr"));
     Applicant applicant = (Applicant) session.getAttribute(Dict.SESSION_APPLICANT);
-    Set<Integer> favIds = new HashSet<>();
-    if (applicant != null) {
-        try {
-            favIds.addAll(new FavoriteDao().jobIdsByApplicant(applicant.getApplicantId()));
-        } catch (Exception ignored) {
-        }
-    }
     String baseQuery = "keyword=" + URLEncoder.encode(keyword, "UTF-8")
             + "&area=" + URLEncoder.encode(area, "UTF-8")
             + "&salaryMin=" + salaryMin + "&salaryMax=" + salaryMax
             + "&sort=" + (popular ? "hot" : "new");
-    String encErr = request.getParameter("err");
+    Map<Integer, List<Job>> groups = new LinkedHashMap<Integer, List<Job>>();
+    for (Job job : jobs) {
+        List<Job> bucket = groups.get(job.getCompanyId());
+        if (bucket == null) {
+            bucket = new ArrayList<Job>();
+            groups.put(job.getCompanyId(), bucket);
+        }
+        bucket.add(job);
+    }
+    boolean showHero = Boolean.TRUE.equals(request.getAttribute("showHero"));
+    int[] homeCounts = request.getAttribute("homeCounts") instanceof int[]
+            ? (int[]) request.getAttribute("homeCounts") : new int[6];
+    int onlineCount = request.getAttribute("onlineCount") instanceof Integer
+            ? (Integer) request.getAttribute("onlineCount") : 0;
+    java.text.DecimalFormat nf = new java.text.DecimalFormat("#,###");
 %>
 <jsp:include page="/common/html-start.jsp"/>
-<main class="page front">
-<div class="wrap">
-<style>
-.search-hero{background:linear-gradient(135deg,#1a1a2e,#16213e);border-radius:14px;color:#fff;padding:26px 28px;margin-bottom:18px}
-.search-hero h1{font-size:20px;margin-bottom:6px}
-.search-hero p{font-size:12px;color:rgba(255,255,255,.6)}
-.filter-card{background:#fff;border-radius:12px;padding:20px 24px;box-shadow:0 2px 12px rgba(0,0,0,.06);margin-bottom:18px}
-.filter-card h2{font-size:15px;font-weight:600;margin-bottom:14px}
-.filter-row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
-.f{display:flex;flex-direction:column;gap:4px}
-.f label{font-size:12px;color:#888}
-.f input,.f select{height:36px;padding:0 10px;border:1px solid #ddd;border-radius:8px;font-size:14px;outline:none}
-.f input.w{width:220px}
-.f input.num{width:90px}
-.btn{height:36px;padding:0 18px;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer}
-.btn-p{background:linear-gradient(135deg,#4facfe,#00f2fe);color:#fff}
-.btn-o{background:#fff;color:#4facfe;border:1px solid #4facfe}
-.res-header{display:flex;justify-content:space-between;align-items:center;margin:4px 2px 12px}
-.res-count{font-size:13px;color:#888}
-.job-item{background:#fff;border-radius:12px;padding:18px 22px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.05);display:flex;justify-content:space-between;align-items:flex-start;gap:16px;border:1px solid transparent;transition:border-color .2s}
-.job-item:hover{border-color:#4facfe}
-.j-name{font-size:16px;font-weight:600;margin-bottom:4px}
-.j-name a{color:#1a1a2e;text-decoration:none}
-.j-company{font-size:13px;color:#666;margin-bottom:8px}
-.j-desc{font-size:12px;color:#999;line-height:1.6;margin-bottom:10px}
-.tag{display:inline-block;padding:2px 10px;border-radius:20px;font-size:12px;font-weight:500;margin-right:6px}
-.t-s{background:#e8f8ef;color:#27ae60}
-.t-l{background:#eef4ff;color:#4facfe}
-.t-h{background:#fff5f5;color:#ff6b6b}
-.ops{display:flex;flex-direction:column;gap:8px;min-width:130px}
-.ops form{display:flex;gap:8px;justify-content:flex-end}
-.btn-sm{height:32px;padding:0 12px;font-size:12px}
-.btn-collect{background:#fff;border:1px solid #ddd;color:#888}
-.btn-collect.on{border-color:#ff6b6b;color:#ff6b6b;background:#fff5f5}
-.btn-apply{background:linear-gradient(135deg,#4facfe,#00f2fe);border:none;color:#fff}
-.empty{text-align:center;padding:48px;color:#aaa;background:#fff;border-radius:12px}
-.pager{display:flex;gap:8px;justify-content:center;align-items:center;margin:18px 0}
-.pager a,.pager span{min-width:36px;height:36px;padding:0 12px;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;background:#fff;font-size:13px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
-.pager a.cur{background:linear-gradient(135deg,#4facfe,#00f2fe);color:#fff}
-.pager .hint{font-size:12px;color:#888}
-</style>
-
-<div class="search-hero">
-    <h1>职位检索</h1>
-    <p>关键词、地区、薪资最多可叠加 4 个条件；「热门」排序按职位浏览量（job_viewnum）</p>
-</div>
-
-<% if ("db".equals(encErr)) { %>
-<div class="empty">数据库连接失败，请检查 MySQL 服务与 q_itoffer 库（见 README 本地运行说明）。</div>
-<% } else { %>
-
-<form class="filter-card" method="get" action="<%= ctx %>/job/search">
-    <h2>筛选条件（#71099528 多条件组合）</h2>
-    <div class="filter-row">
-        <div class="f"><label>关键词（职位/企业）</label>
-            <input class="w" name="keyword" value="<%= keyword %>" placeholder="如 Java、青软"></div>
-        <div class="f"><label>工作地区</label>
-            <input class="w" name="area" value="<%= area %>" placeholder="如 青岛"></div>
-        <div class="f"><label>薪资下限（k）</label>
-            <input class="num" name="salaryMin" value="<%= salaryMin > 0 ? salaryMin : "" %>" placeholder="如 6"></div>
-        <div class="f"><label>薪资上限（k）</label>
-            <input class="num" name="salaryMax" value="<%= salaryMax > 0 ? salaryMax : "" %>" placeholder="如 20"></div>
-        <div class="f"><label>排序</label>
-            <select name="sort">
-                <option value="new" <%= popular ? "" : "selected" %>>最新发布</option>
-                <option value="hot" <%= popular ? "selected" : "" %>>热门（按浏览量）</option>
-            </select></div>
-        <button class="btn btn-p" type="submit">🔍 搜索</button>
-        <a class="btn btn-o" href="<%= ctx %>/job/search">重置</a>
+<% if (showHero) { %>
+<section class="showcase">
+    <div class="carousel" id="homeCarousel">
+            <article class="slide on">
+                <img class="slide-bg" src="<%= ctx %>/images/hero-1.jpg" alt="提供岗前培训的 IT 职位">
+            </article>
+            <article class="slide">
+                <img class="slide-bg" src="<%= ctx %>/images/hero-2.jpg" alt="Java / 前端 / 测试实习">
+            </article>
+            <article class="slide">
+                <img class="slide-bg" src="<%= ctx %>/images/hero-3.jpg" alt="简历完整，投递更顺">
+            </article>
+            <button class="car-btn prev" type="button" aria-label="上一张">‹</button>
+            <button class="car-btn next" type="button" aria-label="下一张">›</button>
+            <div class="dots"></div>
+        </div>
+    <div class="showcase-inner">
+        <div class="stat-strip">
+            <div><b><%= nf.format(homeCounts[0]) %></b><span>合作企业</span></div>
+            <div><b><%= nf.format(homeCounts[1]) %></b><span>在招职位</span></div>
+            <div><b><%= nf.format(homeCounts[2]) %></b><span>注册求职者</span></div>
+            <div><b><%= nf.format(homeCounts[3]) %></b><span>投递次数</span></div>
+            <div><b><%= nf.format(homeCounts[4]) %></b><span>在线简历</span></div>
+            <div><b><%= nf.format(homeCounts[5]) %></b><span>职位浏览</span></div>
+            <div><b><%= nf.format(onlineCount) %></b><span>当前在线</span></div>
+        </div>
     </div>
+</section>
+<script>
+(function () {
+  var root = document.getElementById("homeCarousel");
+  if (!root) return;
+  var slides = root.querySelectorAll(".slide");
+  var dotsBox = root.querySelector(".dots");
+  var i = 0, timer;
+  slides.forEach(function (_, idx) {
+    var b = document.createElement("button");
+    b.type = "button";
+    if (idx === 0) b.className = "on";
+    b.onclick = function () { go(idx); };
+    dotsBox.appendChild(b);
+  });
+  function go(n) {
+    slides[i].classList.remove("on");
+    dotsBox.children[i].classList.remove("on");
+    i = (n + slides.length) % slides.length;
+    slides[i].classList.add("on");
+    dotsBox.children[i].classList.add("on");
+    restart();
+  }
+  function restart() {
+    clearInterval(timer);
+    timer = setInterval(function () { go(i + 1); }, 4500);
+  }
+  root.querySelector(".prev").onclick = function () { go(i - 1); };
+  root.querySelector(".next").onclick = function () { go(i + 1); };
+  restart();
+})();
+</script>
+<% } %>
+<main class="page wide">
+<form class="search-bar" method="get" action="<%= ctx %>/job/search">
+    <input class="input" name="keyword" value="<%= keyword %>" placeholder="职位或企业">
+    <input class="input js-region" name="area" value="<%= area %>" placeholder="选择省 / 市 / 区县" readonly>
+    <input class="input" name="salaryMin" value="<%= salaryMin > 0 ? salaryMin : "" %>" placeholder="薪资下限 k" style="width:110px">
+    <input class="input" name="salaryMax" value="<%= salaryMax > 0 ? salaryMax : "" %>" placeholder="薪资上限 k" style="width:110px">
+    <select class="input" name="sort" style="width:130px">
+        <option value="new" <%= popular ? "" : "selected" %>>最新发布</option>
+        <option value="hot" <%= popular ? "selected" : "" %>>热门浏览</option>
+    </select>
+    <button class="primary inline" type="submit">搜索</button>
+    <a class="btn-lite" href="<%= ctx %>/job/search">重置</a>
 </form>
 
-<div class="res-header">
-    <span class="res-count">共 <%= total %> 个职位 · 第 <%= page %> / <%= pageCount %> 页（每页 <%= pageSize %>）</span>
-    <span class="res-count">条件：关键词“<%= keyword %>” / 地区“<%= area %>” / <%= salaryMin > 0 ? "≥" + salaryMin + "k" : "" %><%= salaryMax > 0 ? " ≤" + salaryMax + "k" : "" %></span>
-</div>
-
-<% if (jobs.isEmpty()) { %>
-<div class="empty">暂无匹配职位，请调整筛选条件</div>
-<% } else { %>
-<% for (Job job : jobs) {
-    boolean faved = favIds.contains(job.getJobId()); %>
-<div class="job-item">
-    <div>
-        <div class="j-name"><a href="<%= ctx %>/job/detail?id=<%= job.getJobId() %>"><%= job.getJobName() %></a></div>
-        <div class="j-company"><%= job.getCompanyName() %> · 浏览 <%= job.getJobViewnum() %> 次</div>
-        <div class="j-desc"><%= job.getJobDesc() %></div>
-        <span class="tag t-s"><%= job.getJobSalary() %></span>
-        <span class="tag t-l"><%= job.getJobArea() %></span>
-        <span class="tag t-h">招 <%= job.getJobHiringnum() %> 人</span>
+<% if (dbErr) { %>
+<p class="err">数据库暂时不可用，请稍后再试。</p>
+<% } else if (jobs.isEmpty()) { %>
+<div class="empty">暂无匹配职位，请调整筛选条件。</div>
+<% } else {
+    for (Map.Entry<Integer, List<Job>> entry : groups.entrySet()) {
+        List<Job> companyJobs = entry.getValue();
+        Job first = companyJobs.get(0);
+        int cid = first.getCompanyId();
+        List<String> points = Pics.highlights(first.getCompanyBrief(), first.getCompanyArea(), first.getCompanySize(), first.getCompanyType());
+%>
+<div class="board">
+    <a class="board-hero" href="<%= ctx %>/firm?id=<%= cid %>">
+        <img class="board-bg" src="<%= Pics.jobCover(first.getJobCover(), cid, ctx) %>" alt=""
+             onerror="this.onerror=null;this.src='<%= ctx %>/images/hero-1.jpg'">
+        <div class="board-overlay">
+            <img class="board-logo" src="<%= Pics.jobThumb(first.getJobThumb(), first.getJobId(), ctx) %>" alt="">
+            <h2><%= first.getCompanyName() %></h2>
+            <ul>
+                <% for (String point : points) { %><li><%= point %></li><% } %>
+            </ul>
+            <p class="board-slogan"><%= Pics.slogan(first.getCompanyName(), first.getCompanyType()) %></p>
+        </div>
+    </a>
+    <% for (int n = 0; n < companyJobs.size(); n++) {
+        Job row = companyJobs.get(n);
+        String rowApply = applicant == null ? ctx + "/login" : ctx + "/job/detail?id=" + row.getJobId();
+        String rowTalk = applicant == null ? ctx + "/login" : ctx + "/talk?jobId=" + row.getJobId();
+    %>
+    <div class="board-job">
+        <div class="job-cta">
+            <a class="apply-cta" href="<%= rowApply %>">我要申请 »</a>
+            <a class="talk-cta" href="<%= rowTalk %>">去谈谈</a>
+        </div>
+        <div class="job-grid">
+            <div class="k">职位</div>
+            <div><a href="<%= ctx %>/job/detail?id=<%= row.getJobId() %>"><%= row.getJobName() %></a></div>
+            <div class="k">薪资</div>
+            <div><%= row.getJobSalary() == null ? "面议" : row.getJobSalary() %></div>
+        </div>
+        <div class="job-grid">
+            <div class="k">到期时间</div>
+            <div><%= row.getJobEndtime() == null || row.getJobEndtime().isEmpty() ? "长期有效" : row.getJobEndtime() %></div>
+            <div class="k">工作地区</div>
+            <div><%= row.getJobArea() == null ? "—" : row.getJobArea() %></div>
+            <% if (n == companyJobs.size() - 1) { %>
+            <div class="more-jobs" style="grid-column:1 / -1;border-bottom:0">
+                <a href="<%= ctx %>/firm?id=<%= cid %>">更多职位</a>
+            </div>
+            <% } %>
+        </div>
     </div>
-    <div class="ops">
-        <a class="btn btn-sm btn-apply" href="<%= ctx %>/job/detail?id=<%= job.getJobId() %>">查看详情 / 投递</a>
-        <% if (applicant != null) { %>
-        <form method="post" action="<%= ctx %>/favorite/<%= faved ? "delete" : "add" %>">
-            <input type="hidden" name="jobId" value="<%= job.getJobId() %>">
-            <input type="hidden" name="back" value="list">
-            <button class="btn btn-sm btn-collect <%= faved ? "on" : "" %>" type="submit"><%= faved ? "★ 已收藏" : "☆ 收藏职位" %></button>
-        </form>
-        <% } else { %>
-        <a class="btn btn-sm btn-collect" href="<%= ctx %>/login">登录后可收藏</a>
-        <% } %>
-    </div>
+    <% } %>
 </div>
-<% } %>
-<% } %>
+<% }
+} %>
 
-<% if (pageCount > 1) { %>
+<% if (!dbErr && pageCount >= 1 && total > 0) { %>
 <div class="pager">
-    <% if (page > 1) { %>
-    <a href="<%= ctx %>/job/search?<%= baseQuery %>&page=<%= page - 1 %>">‹ 上一页</a>
-    <% } else { %><span>‹ 上一页</span><% } %>
-    <span class="hint">第 <%= page %> / <%= pageCount %> 页</span>
-    <% if (page < pageCount) { %>
-    <a href="<%= ctx %>/job/search?<%= baseQuery %>&page=<%= page + 1 %>">下一页 ›</a>
-    <% } else { %><span>下一页 ›</span><% } %>
+    <a href="<%= ctx %>/job/search?<%= baseQuery %>&page=1">首页</a>
+    <% if (curPage > 1) { %>
+    <a href="<%= ctx %>/job/search?<%= baseQuery %>&page=<%= curPage - 1 %>">上一页</a>
+    <% } %>
+    <% if (curPage < pageCount) { %>
+    <a href="<%= ctx %>/job/search?<%= baseQuery %>&page=<%= curPage + 1 %>">下一页</a>
+    <% } %>
+    <a href="<%= ctx %>/job/search?<%= baseQuery %>&page=<%= pageCount %>">尾页</a>
+    <span>当前是第<%= curPage %>页，共<%= pageCount %>页</span>
 </div>
 <% } %>
-
-<% } %>
-</div>
 </main>
 <jsp:include page="/common/footer.jsp"/>

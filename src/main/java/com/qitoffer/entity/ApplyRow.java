@@ -12,6 +12,7 @@ public class ApplyRow {
     private int resumeId;
     private Date applyDate;
     private int applyState;   // 1待处理 2已查看 3已面试 0已拒绝
+    private String applicantName;
 
     public int getApplyId() { return applyId; }
     public void setApplyId(int applyId) { this.applyId = applyId; }
@@ -27,6 +28,8 @@ public class ApplyRow {
 
     public int getApplyState() { return applyState; }
     public void setApplyState(int applyState) { this.applyState = applyState; }
+    public String getApplicantName() { return applicantName; }
+    public void setApplicantName(String applicantName) { this.applicantName = applicantName; }
 
     /** 状态中文名，JSP 直接用 ${row.stateText} */
     public String getStateText() {

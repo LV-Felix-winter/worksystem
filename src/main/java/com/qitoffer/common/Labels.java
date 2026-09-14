@@ -44,4 +44,22 @@ public final class Labels {
     public static String jobStateLabel(int state) {
         return state == Dict.JOB_ONLINE ? "招聘中" : "已下架";
     }
+
+    public static String userRoleLabel(int role) {
+        if (role == Dict.ROLE_ADMIN) {
+            return "管理员";
+        }
+        if (role == Dict.ROLE_COMPANY) {
+            return "企业";
+        }
+        return "未知";
+    }
+
+    public static String userStateLabel(int state) {
+        return state == Dict.STATE_ENABLED ? "启用" : "禁用";
+    }
+
+    public static String companyStateLabel(int state) {
+        return state == Dict.STATE_ENABLED ? "招聘中" : "已停用";
+    }
 }

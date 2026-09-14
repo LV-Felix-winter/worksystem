@@ -15,9 +15,14 @@
 <% if (backend == null) { %>
 <jsp:include page="/common/login-gate.jsp"/>
 <% } else { %>
-<div class="card">
-    <h1>在线用户</h1>
-    <p class="muted">当前共 <%= rows.size() %> 个登录会话，退出或超时后自动消失。</p>
+<div class="manage-sheet">
+    <div class="sheet-bar">
+        <div>
+            <h1>在线用户</h1>
+            <p class="muted">当前共 <%= rows.size() %> 个登录会话，退出或超时后自动消失。</p>
+        </div>
+    </div>
+    <div class="manage-body">
     <div class="table-wrap">
         <table class="data">
             <thead>
@@ -40,10 +45,10 @@
             %>
             <tr>
                 <td><span class="tag"><%= row.getRoleLabel() %></span></td>
-                <td><%= row.getDisplayName() %></td>
+                <td><b><%= row.getDisplayName() %></b></td>
                 <td><%= row.getAccount() %></td>
                 <td><%= OnlineUserTracker.format(row.getLoginAt()) %></td>
-                <td><%= self ? "本机" : "" %></td>
+                <td><% if (self) { %><span class="tag">本机</span><% } %></td>
             </tr>
             <%
                 }
@@ -51,6 +56,7 @@
             %>
             </tbody>
         </table>
+    </div>
     </div>
 </div>
 <% } %>

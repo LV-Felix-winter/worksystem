@@ -28,6 +28,10 @@ public class Apply {
     private String resumeJobIntension;
     private String resumeJobExperience;
     private String resumeAttachment;
+    private String resumeHeadShot;
+    private Date resumeBirthday;
+    private String resumeEducation;
+    private String resumeCurrentLoc;
     private int resumeCompleteness;
 
     public int getApplyId() { return applyId; }
@@ -62,6 +66,14 @@ public class Apply {
     public void setResumeJobExperience(String resumeJobExperience) { this.resumeJobExperience = resumeJobExperience; }
     public String getResumeAttachment() { return resumeAttachment; }
     public void setResumeAttachment(String resumeAttachment) { this.resumeAttachment = resumeAttachment; }
+    public String getResumeHeadShot() { return resumeHeadShot; }
+    public void setResumeHeadShot(String resumeHeadShot) { this.resumeHeadShot = resumeHeadShot; }
+    public Date getResumeBirthday() { return resumeBirthday; }
+    public void setResumeBirthday(Date resumeBirthday) { this.resumeBirthday = resumeBirthday; }
+    public String getResumeEducation() { return resumeEducation; }
+    public void setResumeEducation(String resumeEducation) { this.resumeEducation = resumeEducation; }
+    public String getResumeCurrentLoc() { return resumeCurrentLoc; }
+    public void setResumeCurrentLoc(String resumeCurrentLoc) { this.resumeCurrentLoc = resumeCurrentLoc; }
     public int getResumeCompleteness() { return resumeCompleteness; }
     public void setResumeCompleteness(int resumeCompleteness) { this.resumeCompleteness = resumeCompleteness; }
 }

@@ -3,12 +3,15 @@
 <%@ page import="com.qitoffer.entity.User" %>
 <%
     User shellUser = (User) session.getAttribute(Dict.SESSION_ADMIN);
-    request.setAttribute("shellBackend", shellUser != null);
-    if (shellUser != null) {
+    boolean adminShell = shellUser != null && shellUser.getUserRole() == Dict.ROLE_ADMIN;
+    request.setAttribute("shellBackend", Boolean.FALSE);
+    if (adminShell) {
 %>
-<div class="shell">
-<jsp:include page="/common/manage-left.jsp"/>
-<main class="page">
+<main class="page admin">
+<%
+    } else if (shellUser != null) {
+%>
+<main class="page firm">
 <%
     } else {
 %>

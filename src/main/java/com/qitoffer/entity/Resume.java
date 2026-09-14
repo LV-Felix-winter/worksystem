@@ -19,6 +19,12 @@ public class Resume {
     private String email;
     private String jobIntension;
     private String jobExperience;
+    private String education;
+    private String projectExp;
+    private String workExp;
+    private String skills;
+    private String honors;
+    private String selfEval;
     private String headShot;
     private String attachment;
     private int completeness;
@@ -49,6 +55,18 @@ public class Resume {
     public void setJobIntension(String jobIntension) { this.jobIntension = jobIntension; }
     public String getJobExperience() { return jobExperience; }
     public void setJobExperience(String jobExperience) { this.jobExperience = jobExperience; }
+    public String getEducation() { return education; }
+    public void setEducation(String education) { this.education = education; }
+    public String getProjectExp() { return projectExp; }
+    public void setProjectExp(String projectExp) { this.projectExp = projectExp; }
+    public String getWorkExp() { return workExp; }
+    public void setWorkExp(String workExp) { this.workExp = workExp; }
+    public String getSkills() { return skills; }
+    public void setSkills(String skills) { this.skills = skills; }
+    public String getHonors() { return honors; }
+    public void setHonors(String honors) { this.honors = honors; }
+    public String getSelfEval() { return selfEval; }
+    public void setSelfEval(String selfEval) { this.selfEval = selfEval; }
     public String getHeadShot() { return headShot; }
     public void setHeadShot(String headShot) { this.headShot = headShot; }
     public String getAttachment() { return attachment; }

@@ -1,6 +1,8 @@
 package com.qitoffer.servlet;
 
+import com.qitoffer.dao.DashboardDAO;
 import com.qitoffer.dao.JobDao;
+import com.qitoffer.util.OnlineUserTracker;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -15,7 +17,7 @@ import java.io.IOException;
  */
 @WebServlet("/job/search")
 public class JobSearchServlet extends HttpServlet {
-    private static final int PAGE_SIZE = 6;
+    private static final int PAGE_SIZE = 9;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -30,18 +32,20 @@ public class JobSearchServlet extends HttpServlet {
 
         JobDao dao = new JobDao();
         int total = 0;
+        boolean dbErr = false;
         try {
             total = dao.count(keyword, area, salaryMin, salaryMax, false, null);
         } catch (Exception e) {
-            resp.sendRedirect(req.getContextPath() + "/job/search?err=db");
-            return;
+            dbErr = true;
         }
         int totalPages = Math.max(1, (total + PAGE_SIZE - 1) / PAGE_SIZE);
         if (page > totalPages) {
             page = totalPages;
         }
 
-        req.setAttribute("jobs", safeSearch(dao, keyword, area, salaryMin, salaryMax, popular, page));
+        req.setAttribute("jobs", dbErr ? java.util.Collections.emptyList()
+                : safeSearch(dao, keyword, area, salaryMin, salaryMax, popular, page));
+        req.setAttribute("dbErr", dbErr);
         req.setAttribute("total", total);
         req.setAttribute("page", page);
         req.setAttribute("pageCount", totalPages);
@@ -53,6 +57,18 @@ public class JobSearchServlet extends HttpServlet {
         req.setAttribute("popular", popular);
         req.setAttribute("navKey", "jobs");
         req.setAttribute("pageTitle", "职位检索 · 锐聘");
+        boolean showHero = page == 1 && keyword.isEmpty() && area.isEmpty() && salaryMin == 0 && salaryMax == 0;
+        req.setAttribute("showHero", showHero);
+        req.setAttribute("hideBrand", showHero);
+        if (showHero) {
+            int[] counts = new int[6];
+            try {
+                counts = new DashboardDAO().loadHomeCounts();
+            } catch (Exception ignored) {
+            }
+            req.setAttribute("homeCounts", counts);
+            req.setAttribute("onlineCount", OnlineUserTracker.list().size());
+        }
         req.getRequestDispatcher("/job/search.jsp").forward(req, resp);
     }
 

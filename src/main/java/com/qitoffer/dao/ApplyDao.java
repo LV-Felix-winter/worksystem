@@ -65,11 +65,15 @@ public class ApplyDao {
 
     /** 企业「应聘信息」：只出本企业职位收到的投递，附简历摘要 */
     public List<Apply> listByCompany(int companyId) throws SQLException {
+        new ResumeDao();
+        DemoSeed.ensure();
         String sql = "SELECT a.*, j.job_name, j.job_salary, j.job_area, c.company_name, "
                 + "r.realname AS resume_realname, r.gender AS resume_gender, "
                 + "r.telephone AS resume_telephone, r.email AS resume_email, "
                 + "r.job_intension AS resume_job_intension, r.job_experience AS resume_job_experience, "
-                + "r.attachment AS resume_attachment, r.completeness AS resume_completeness "
+                + "r.attachment AS resume_attachment, r.completeness AS resume_completeness, "
+                + "r.head_shot AS resume_head_shot, r.birthday AS resume_birthday, "
+                + "r.education AS resume_education, r.current_loc AS resume_current_loc "
                 + "FROM tb_apply a "
                 + "JOIN tb_job j ON a.job_id = j.job_id "
                 + "JOIN tb_company c ON j.company_id = c.company_id "
@@ -209,6 +213,80 @@ public class ApplyDao {
         }
     }
 
+    public List<Apply> listPageAdmin(String keyword, Integer state, int page, int pageSize) throws SQLException {
+        StringBuilder sql = new StringBuilder(
+                "SELECT a.*, j.job_name, j.job_salary, j.job_area, c.company_name, "
+                        + "r.realname AS resume_realname, r.gender AS resume_gender, "
+                        + "r.telephone AS resume_telephone, r.email AS resume_email, "
+                        + "r.job_intension AS resume_job_intension, r.job_experience AS resume_job_experience, "
+                        + "r.attachment AS resume_attachment, r.completeness AS resume_completeness, "
+                        + "r.head_shot AS resume_head_shot, r.birthday AS resume_birthday, "
+                        + "r.education AS resume_education, r.current_loc AS resume_current_loc "
+                        + "FROM tb_apply a "
+                        + "JOIN tb_job j ON a.job_id = j.job_id "
+                        + "JOIN tb_company c ON j.company_id = c.company_id "
+                        + "JOIN tb_resume r ON a.resume_id = r.resume_id WHERE 1=1");
+        List<Object> params = new ArrayList<>();
+        appendAdminWhere(sql, params, keyword, state);
+        sql.append(" ORDER BY a.apply_date DESC, a.apply_id DESC LIMIT ? OFFSET ?");
+        params.add(pageSize);
+        params.add(Math.max(0, (page - 1) * pageSize));
+        return queryList(sql.toString(), params.toArray());
+    }
+
+    public int countPageAdmin(String keyword, Integer state) throws SQLException {
+        StringBuilder sql = new StringBuilder(
+                "SELECT COUNT(*) FROM tb_apply a "
+                        + "JOIN tb_job j ON a.job_id = j.job_id "
+                        + "JOIN tb_company c ON j.company_id = c.company_id "
+                        + "JOIN tb_resume r ON a.resume_id = r.resume_id WHERE 1=1");
+        List<Object> params = new ArrayList<>();
+        appendAdminWhere(sql, params, keyword, state);
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            conn = DbUtil.getConnection();
+            ps = conn.prepareStatement(sql.toString());
+            for (int i = 0; i < params.size(); i++) {
+                ps.setObject(i + 1, params.get(i));
+            }
+            rs = ps.executeQuery();
+            rs.next();
+            return rs.getInt(1);
+        } finally {
+            DbUtil.close(rs, ps, conn);
+        }
+    }
+
+    public boolean updateStateAdmin(int applyId, int newState) throws SQLException {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = DbUtil.getConnection();
+            ps = conn.prepareStatement("UPDATE tb_apply SET apply_state = ? WHERE apply_id = ?");
+            ps.setInt(1, newState);
+            ps.setInt(2, applyId);
+            return ps.executeUpdate() > 0;
+        } finally {
+            DbUtil.close(null, ps, conn);
+        }
+    }
+
+    private static void appendAdminWhere(StringBuilder sql, List<Object> params, String keyword, Integer state) {
+        if (keyword != null && !keyword.isBlank()) {
+            sql.append(" AND (j.job_name LIKE ? OR c.company_name LIKE ? OR IFNULL(r.realname,'') LIKE ?)");
+            String like = "%" + keyword.trim() + "%";
+            params.add(like);
+            params.add(like);
+            params.add(like);
+        }
+        if (state != null) {
+            sql.append(" AND a.apply_state = ?");
+            params.add(state);
+        }
+    }
+
     private List<Apply> queryList(String sql, Object[] params) throws SQLException {
         Connection conn = null;
         PreparedStatement ps = null;
@@ -233,7 +311,7 @@ public class ApplyDao {
                 a.setCompanyName(rs.getString("company_name"));
                 a.setJobSalary(rs.getString("job_salary"));
                 a.setJobArea(rs.getString("job_area"));
-                if (rs.getMetaData().getColumnCount() >= 12) {
+                if (hasColumn(rs, "resume_realname")) {
                     a.setResumeRealname(rs.getString("resume_realname"));
                     a.setResumeGender(rs.getString("resume_gender"));
                     a.setResumeTelephone(rs.getString("resume_telephone"));
@@ -242,6 +320,11 @@ public class ApplyDao {
                     a.setResumeJobExperience(rs.getString("resume_job_experience"));
                     a.setResumeAttachment(rs.getString("resume_attachment"));
                     a.setResumeCompleteness(rs.getInt("resume_completeness"));
+                    a.setResumeHeadShot(rs.getString("resume_head_shot"));
+                    java.sql.Date birthday = rs.getDate("resume_birthday");
+                    a.setResumeBirthday(birthday);
+                    a.setResumeEducation(rs.getString("resume_education"));
+                    a.setResumeCurrentLoc(rs.getString("resume_current_loc"));
                 }
                 list.add(a);
             }
@@ -249,5 +332,15 @@ public class ApplyDao {
         } finally {
             DbUtil.close(rs, ps, conn);
         }
+    }
+
+    private static boolean hasColumn(ResultSet rs, String name) throws SQLException {
+        java.sql.ResultSetMetaData md = rs.getMetaData();
+        for (int i = 1; i <= md.getColumnCount(); i++) {
+            if (name.equalsIgnoreCase(md.getColumnLabel(i))) {
+                return true;
+            }
+        }
+        return false;
     }
 }

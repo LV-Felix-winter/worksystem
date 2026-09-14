@@ -5,10 +5,13 @@ import com.qitoffer.common.Labels;
 import com.qitoffer.dao.ApplyDao;
 import com.qitoffer.dao.CompanyDao;
 import com.qitoffer.dao.JobDao;
+import com.qitoffer.dao.MessageDao;
 import com.qitoffer.dao.ResumeDao;
 import com.qitoffer.entity.Applicant;
 import com.qitoffer.entity.Apply;
+import com.qitoffer.entity.Company;
 import com.qitoffer.entity.Job;
+import com.qitoffer.entity.Message;
 import com.qitoffer.entity.Resume;
 import com.qitoffer.entity.User;
 import jakarta.servlet.ServletException;
@@ -86,7 +89,7 @@ public class ApplyServlet extends HttpServlet {
         }
         req.setAttribute("applyList", list);
         req.setAttribute("navKey", "apply");
-        req.setAttribute("pageTitle", "我的投递 · 锐聘");
+        req.setAttribute("pageTitle", "我的 · 投递");
         req.getRequestDispatcher("/user/apply.jsp").forward(req, resp);
     }
 
@@ -158,7 +161,7 @@ public class ApplyServlet extends HttpServlet {
             }
         } catch (Exception e) {
             setMsg(req, "简历初始化失败，请稍后再试。");
-            resp.sendRedirect(req.getContextPath() + "/user/apply.jsp");
+            resp.sendRedirect(req.getContextPath() + "/apply/mine");
             return;
         }
         if (jobId <= 0 || resumeId <= 0) {
@@ -177,12 +180,13 @@ public class ApplyServlet extends HttpServlet {
                 setMsg(req, "您已投递过「" + job.getJobName() + "」，请查看我的投递。");
             } else {
                 applyDao.add(jobId, resumeId);
+                notifyCompanyNewApply(job, applicant);
                 setMsg(req, "投递成功，初始状态：待处理。");
             }
         } catch (Exception e) {
             setMsg(req, "投递失败，请稍后再试。");
         }
-        resp.sendRedirect(req.getContextPath() + "/user/apply.jsp");
+        resp.sendRedirect(req.getContextPath() + "/apply/mine");
     }
 
     /** 企业更新投递状态（#71099539：校验归属职位 + 通知求职者） */
@@ -230,6 +234,24 @@ public class ApplyServlet extends HttpServlet {
     }
 
     // ---------- helpers ----------
+
+    private void notifyCompanyNewApply(Job job, Applicant applicant) {
+        try {
+            Company company = new CompanyDao().findById(job.getCompanyId());
+            if (company == null) {
+                return;
+            }
+            String name = applicant.getApplicantName() != null && !applicant.getApplicantName().isEmpty()
+                    ? applicant.getApplicantName() : applicant.getApplicantPhone();
+            Message msg = new Message();
+            msg.setReceiverType(Dict.RECEIVER_USER);
+            msg.setReceiverId(company.getUserId());
+            msg.setTitle("新投递通知");
+            msg.setContent("求职者「" + name + "」投递了职位「" + job.getJobName() + "」。");
+            new MessageDao().insert(msg);
+        } catch (Exception ignored) {
+        }
+    }
 
     private String jobNameOf(int applyId) {
         try {

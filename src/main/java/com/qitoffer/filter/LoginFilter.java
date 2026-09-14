@@ -28,13 +28,15 @@ public class LoginFilter implements Filter {
         if (backend == null) {
             if (AuthSupport.applicant(req) != null) {
                 AuthSupport.redirectTo(req, resp, "/");
+            } else if (AuthSupport.isAdminWorkspace(path)) {
+                AuthSupport.redirectLogin(req, resp, "admin", null, "auth");
             } else {
                 AuthSupport.redirectLogin(req, resp, "company", "pwd", "auth");
             }
             return;
         }
         if (AuthSupport.isAdminOnlyPath(path) && backend.getUserRole() != Dict.ROLE_ADMIN) {
-            AuthSupport.redirectTo(req, resp, "/manage/?err=denied");
+            AuthSupport.redirectTo(req, resp, "/manage/user.jsp?err=denied");
             return;
         }
         chain.doFilter(request, response);

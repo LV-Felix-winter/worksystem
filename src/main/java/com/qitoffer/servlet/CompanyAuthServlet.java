@@ -25,10 +25,6 @@ public class CompanyAuthServlet extends HttpServlet {
             AuthSupport.redirectLogin(req, resp, "company", "pwd", "param");
             return;
         }
-        if (!AuthSupport.consumeImageCaptcha(req, req.getParameter("captcha"))) {
-            AuthSupport.redirectLogin(req, resp, "company", "pwd", "imgcode");
-            return;
-        }
         try {
             User user = userDao.findByPhone(phone);
             if (user == null) {
@@ -42,8 +38,11 @@ public class CompanyAuthServlet extends HttpServlet {
                 AuthSupport.redirectLogin(req, resp, "company", "pwd", "disabled");
                 return;
             }
-            boolean nameOk = userDao.companyNameMatches(user, companyName)
-                    || (user.getUserRole() == Dict.ROLE_ADMIN && "系统管理员".equals(companyName));
+            if (user.getUserRole() == Dict.ROLE_ADMIN) {
+                AuthSupport.redirectLogin(req, resp, "admin", null, "role");
+                return;
+            }
+            boolean nameOk = userDao.companyNameMatches(user, companyName);
             if (!nameOk) {
                 AuthSupport.redirectLogin(req, resp, "company", "pwd", "company");
                 return;
@@ -51,7 +50,7 @@ public class CompanyAuthServlet extends HttpServlet {
             user.setUserPwd(null);
             req.getSession(true).setAttribute(Dict.SESSION_ADMIN, user);
             req.getSession().removeAttribute(Dict.SESSION_APPLICANT);
-            resp.sendRedirect(req.getContextPath() + "/manage/");
+            resp.sendRedirect(req.getContextPath() + "/company/dashboard");
         } catch (Exception e) {
             AuthSupport.redirectLogin(req, resp, "company", "pwd", "server");
         }

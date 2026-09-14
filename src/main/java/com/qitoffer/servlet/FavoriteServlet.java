@@ -19,7 +19,7 @@ import java.util.List;
  * 路径：/favorite/add /favorite/delete /favorite/list
  * 处理人：佟乐
  */
-@WebServlet("/favorite/*")
+@WebServlet(urlPatterns = {"/favorite/list", "/favorite/add", "/favorite/delete"})
 public class FavoriteServlet extends HttpServlet {
     private final FavoriteDao favoriteDao = new FavoriteDao();
 
@@ -40,7 +40,7 @@ public class FavoriteServlet extends HttpServlet {
         }
         req.setAttribute("favorites", favorites);
         req.setAttribute("navKey", "fav");
-        req.setAttribute("pageTitle", "收藏职位 · 锐聘");
+        req.setAttribute("pageTitle", "我的 · 收藏");
         req.getRequestDispatcher("/favorite/list.jsp").forward(req, resp);
     }
 
@@ -54,7 +54,7 @@ public class FavoriteServlet extends HttpServlet {
             return;
         }
         int jobId = parseInt(req.getParameter("jobId"));
-        String path = req.getPathInfo() == null ? "" : req.getPathInfo();
+        String path = req.getServletPath();
         String back = "list".equals(req.getParameter("back"))
                 ? req.getContextPath() + "/favorite/list"
                 : req.getContextPath() + "/job/detail?id=" + jobId;
@@ -62,7 +62,7 @@ public class FavoriteServlet extends HttpServlet {
             resp.sendRedirect(req.getContextPath() + "/job/search");
             return;
         }
-        if ("/add".equals(path)) {
+        if (path.endsWith("/add")) {
             // 收藏前校验职位存在且在招
             boolean ok = true;
             try {
@@ -82,7 +82,7 @@ public class FavoriteServlet extends HttpServlet {
             } else {
                 back += sep + "favErr=1";
             }
-        } else if ("/delete".equals(path)) {
+        } else if (path.endsWith("/delete")) {
             boolean backIsList = back.endsWith("/favorite/list");
             String sep = backIsList ? "?" : "&";
             try {

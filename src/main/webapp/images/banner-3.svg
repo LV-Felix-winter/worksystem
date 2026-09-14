@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="420" viewBox="0 0 1200 420" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="b3sky" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f3efe4"/>
+      <stop offset="1" stop-color="#8ec9b2"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#b3sky)"/>
+  <circle cx="980" cy="70" r="42" fill="#f4e2b0"/>
+  <path d="M0 300 C220 230 420 280 640 210 C860 140 1040 250 1200 190 L1200 420 L0 420 Z" fill="#7ecfb3"/>
+  <path d="M0 360 C260 310 520 350 780 300 C980 260 1120 330 1200 300 L1200 420 L0 420 Z" fill="#3fa888"/>
+  <g fill="#16324f" opacity=".4">
+    <rect x="40" y="210" width="55" height="210"/>
+    <rect x="110" y="160" width="72" height="260"/>
+    <rect x="195" y="190" width="48" height="230"/>
+    <rect x="255" y="120" width="88" height="300"/>
+    <rect x="360" y="180" width="64" height="240"/>
+  </g>
+</svg>

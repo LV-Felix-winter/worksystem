@@ -52,8 +52,10 @@ public class DashboardDAO {
     /** 投递列表，applyState 为 null 表示全部 */
     public List<ApplyRow> listApplies(int companyId, Integer applyState) throws SQLException {
         StringBuilder sql = new StringBuilder(
-                "SELECT a.apply_id, j.job_name, a.resume_id, a.apply_date, a.apply_state " +
+                "SELECT a.apply_id, j.job_name, a.resume_id, a.apply_date, a.apply_state, " +
+                        "r.realname AS applicant_name " +
                         "FROM tb_apply a JOIN tb_job j ON a.job_id=j.job_id " +
+                        "JOIN tb_resume r ON a.resume_id=r.resume_id " +
                         "WHERE j.company_id=? ");
         if (applyState != null) sql.append(" AND a.apply_state=? ");
         sql.append(" ORDER BY a.apply_date DESC LIMIT 200");
@@ -74,10 +76,36 @@ public class DashboardDAO {
                     r.setResumeId(rs.getInt("resume_id"));
                     r.setApplyDate(rs.getTimestamp("apply_date"));
                     r.setApplyState(rs.getInt("apply_state"));
+                    r.setApplicantName(rs.getString("applicant_name"));
                     list.add(r);
                 }
             }
         }
         return list;
+    }
+
+    /** 前台首页数据条：企业 / 在招 / 求职者 / 投递 / 简历 / 浏览 */
+    public int[] loadHomeCounts() throws SQLException {
+        String sql = "SELECT "
+                + "(SELECT COUNT(*) FROM tb_company) AS companies, "
+                + "(SELECT COUNT(*) FROM tb_job WHERE job_state = 1) AS jobs, "
+                + "(SELECT COUNT(*) FROM tb_applicant) AS applicants, "
+                + "(SELECT COUNT(*) FROM tb_apply) AS applies, "
+                + "(SELECT COUNT(*) FROM tb_resume) AS resumes, "
+                + "(SELECT COALESCE(SUM(job_viewnum), 0) FROM tb_job) AS views";
+        try (Connection conn = DbUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            int[] n = new int[6];
+            if (rs.next()) {
+                n[0] = rs.getInt("companies");
+                n[1] = rs.getInt("jobs");
+                n[2] = rs.getInt("applicants");
+                n[3] = rs.getInt("applies");
+                n[4] = rs.getInt("resumes");
+                n[5] = rs.getInt("views");
+            }
+            return n;
+        }
     }
 }

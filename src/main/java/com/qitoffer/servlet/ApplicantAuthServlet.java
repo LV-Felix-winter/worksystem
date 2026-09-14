@@ -32,10 +32,6 @@ public class ApplicantAuthServlet extends HttpServlet {
                     return;
                 }
             } else {
-                if (!AuthSupport.consumeImageCaptcha(req, req.getParameter("captcha"))) {
-                    AuthSupport.redirectLogin(req, resp, "applicant", "pwd", "imgcode");
-                    return;
-                }
                 String password = AuthSupport.trim(req.getParameter("password"));
                 if (applicant == null || !password.equals(applicant.getApplicantPwd())) {
                     AuthSupport.redirectLogin(req, resp, "applicant", "pwd", "login");
@@ -49,7 +45,7 @@ public class ApplicantAuthServlet extends HttpServlet {
             applicant.setApplicantPwd(null);
             req.getSession(true).setAttribute(Dict.SESSION_APPLICANT, applicant);
             req.getSession().removeAttribute(Dict.SESSION_ADMIN);
-            resp.sendRedirect(req.getContextPath() + "/");
+            resp.sendRedirect(req.getContextPath() + "/job/search");
         } catch (Exception e) {
             AuthSupport.redirectLogin(req, resp, "applicant", mode, "server");
         }

@@ -6,6 +6,7 @@ public class User {
     private String userPwd;
     private String userRealname;
     private String userEmail;
+    private String userPhone;
     private int userRole;
     private int userState;
 
@@ -47,6 +48,14 @@ public class User {
 
     public void setUserEmail(String userEmail) {
         this.userEmail = userEmail;
+    }
+
+    public String getUserPhone() {
+        return userPhone;
+    }
+
+    public void setUserPhone(String userPhone) {
+        this.userPhone = userPhone;
     }
 
     public int getUserRole() {
