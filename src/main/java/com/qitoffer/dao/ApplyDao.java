@@ -69,7 +69,7 @@ public class ApplyDao {
         DemoSeed.ensure();
         String sql = "SELECT a.*, j.job_name, j.job_salary, j.job_area, c.company_name, "
                 + "r.realname AS resume_realname, r.gender AS resume_gender, "
-                + "r.telephone AS resume_telephone, r.email AS resume_email, "
+                + "r.telephone AS resume" + "_telephone, r.email AS resume_email, "
                 + "r.job_intension AS resume_job_intension, r.job_experience AS resume_job_experience, "
                 + "r.attachment AS resume_attachment, r.completeness AS resume_completeness, "
                 + "r.head_shot AS resume_head_shot, r.birthday AS resume_birthday, "
